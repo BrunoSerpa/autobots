@@ -1,58 +1,46 @@
 package com.autobots.automanager.controles;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.autobots.automanager.entidades.Cliente;
-import com.autobots.automanager.modelo.ClienteAtualizador;
-import com.autobots.automanager.modelo.ClienteSelecionador;
-import com.autobots.automanager.repositorios.ClienteRepositorio;
+import com.autobots.automanager.servicos.ClienteServicos;
 
 @RestController
-@RequestMapping("/cliente")
+@RequestMapping("/clientes")
 public class ClienteControle {
 	@Autowired
-	private ClienteRepositorio repositorio;
-	@Autowired
-	private ClienteSelecionador selecionador;
-
-	@GetMapping("/cliente/{id}")
-	public Cliente obterCliente(@PathVariable long id) {
-		List<Cliente> clientes = repositorio.findAll();
-		return selecionador.selecionar(clientes, id);
-	}
-
-	@GetMapping("/clientes")
+	private ClienteServicos servicos;
+	
+	@GetMapping
 	public List<Cliente> obterClientes() {
-		List<Cliente> clientes = repositorio.findAll();
-		return clientes;
+		return servicos.listarClientes();
 	}
 
-	@PostMapping("/cadastro")
-	public void cadastrarCliente(@RequestBody Cliente cliente) {
-		repositorio.save(cliente);
+	@GetMapping("/{id}")
+	public Optional<Cliente> obterCliente(@PathVariable long id) {
+		return servicos.buscarPorId(id);
 	}
 
-	@PutMapping("/atualizar")
-	public void atualizarCliente(@RequestBody Cliente atualizacao) {
-		Cliente cliente = repositorio.getById(atualizacao.getId());
-		ClienteAtualizador atualizador = new ClienteAtualizador();
-		atualizador.atualizar(cliente, atualizacao);
-		repositorio.save(cliente);
+	@PostMapping
+	public ResponseEntity<Cliente> cadastrarCliente(@RequestBody Cliente cliente) {
+		Cliente clienteSalvo = servicos.salvarCliente(cliente);
+        return ResponseEntity.ok(clienteSalvo);
 	}
 
-	@DeleteMapping("/excluir")
-	public void excluirCliente(@RequestBody Cliente exclusao) {
-		Cliente cliente = repositorio.getById(exclusao.getId());
-		repositorio.delete(cliente);
+	@PutMapping("/{id}")
+	public ResponseEntity<Cliente> atualizarCliente(@PathVariable long id, @RequestBody Cliente atualizacao) {
+		Cliente clienteAtualizado = servicos.atualizarCliente(id, atualizacao);
+		return clienteAtualizado != null ? ResponseEntity.ok(clienteAtualizado) : ResponseEntity.notFound().build();
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Cliente> excluirCliente(@PathVariable long id) {
+		servicos.excluirCliente(id);
+        return ResponseEntity.noContent().build();
 	}
 }
