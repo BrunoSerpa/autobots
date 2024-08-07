@@ -14,18 +14,25 @@ public class Cliente {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column
+
+	@Column(nullable = false, length = 180)
 	private String nome;
-	@Column
+
+	@Column(length = 180)
 	private String nomeSocial;
-	@Column
+
+	@Column(nullable = false)
 	private Date dataNascimento;
-	@Column
+
+	@Column(nullable = false)
 	private Date dataCadastro;
+
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Documento> documentos = new ArrayList<>();
+
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Endereco endereco;
+
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Telefone> telefones = new ArrayList<>();
 }

@@ -10,8 +10,8 @@ public class Telefone {
 	@Id()
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column
+	@Column(length = 3, nullable = false)
 	private String ddd;
-	@Column
+	@Column(length = 10, nullable = false)
 	private String numero;
 }

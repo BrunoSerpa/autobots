@@ -10,8 +10,8 @@ public class Documento {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column
+	@Column(length = 180,nullable = false)
 	private String tipo;
-	@Column(unique = true)
+	@Column(length = 20, nullable = false, unique = true)
 	private String numero;
 }

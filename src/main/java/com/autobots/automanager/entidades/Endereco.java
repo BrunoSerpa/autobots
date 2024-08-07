@@ -10,17 +10,17 @@ public class Endereco {
 	@Id()
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(nullable = true)
+	@Column(length = 180, nullable = true)
 	private String estado;
-	@Column(nullable = false)
+	@Column(length = 300, nullable = true)
 	private String cidade;
-	@Column(nullable = true)
+	@Column(length = 300, nullable = true)
 	private String bairro;
-	@Column(nullable = false)
+	@Column(length = 300, nullable = true)
 	private String rua;
-	@Column(nullable = false)
+	@Column(length = 5, nullable = false)
 	private String numero;
-	@Column(nullable = true)
+	@Column(length = 8, nullable = false)
 	private String codigoPostal;
 	@Column(unique = false, nullable = true)
 	private String informacoesAdicionais;
