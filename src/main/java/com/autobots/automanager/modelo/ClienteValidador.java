@@ -53,8 +53,10 @@ public class ClienteValidador {
         }
 
         if (cliente.getDocumentos() != null) {
-            cliente.getDocumentos().forEach(doc -> {
-                erros.addAll(documentoValidador.validar(doc));
+            cliente.getDocumentos().forEach(documento -> {
+            	if (documento != null) {
+            		erros.addAll(documentoValidador.validar(documento));
+            	}
             });
         }
 
@@ -64,7 +66,9 @@ public class ClienteValidador {
 
         if (cliente.getTelefones() != null) {
             cliente.getTelefones().forEach(telefone -> {
-                erros.addAll(telefoneValidador.validar(telefone));
+            	if (telefone != null) {
+            		erros.addAll(telefoneValidador.validar(telefone));
+            	}
             });
         }
 
