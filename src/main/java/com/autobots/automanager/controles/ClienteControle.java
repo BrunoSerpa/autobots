@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.autobots.automanager.entidades.Cliente;
+import com.autobots.automanager.entidades.Endereco;
 import com.autobots.automanager.modelo.ClienteValidador;
 import com.autobots.automanager.servicos.ClienteServicos;
 
@@ -50,4 +51,14 @@ public class ClienteControle {
 		servicos.excluirCliente(id);
         return ResponseEntity.noContent().build();
 	}
+	
+	@PutMapping("/{clienteId}/endereco")
+    public ResponseEntity<?> atualizarEndereco(@PathVariable long clienteId, @RequestBody Endereco endereco) {
+        return servicos.atualizarEndereco(clienteId, endereco);
+    }
+
+    @DeleteMapping("/{clienteId}/endereco")
+    public ResponseEntity<?> excluirEndereco(@PathVariable long clienteId) {
+        return servicos.excluirEndereco(clienteId);
+    }
 }
