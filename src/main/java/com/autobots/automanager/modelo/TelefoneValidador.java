@@ -21,16 +21,16 @@ public class TelefoneValidador {
 
         if (verificador.verificar(ddd)) {
         	erros.add("DDD não pode estar vazio.");
-        } else if(SOMENTE_NUMEROS.matcher(ddd).matches()) {
-        	erros.add("DDD deve ter no máximo " + LIMITE_DDD + " caracteres.");
+        } else if(!SOMENTE_NUMEROS.matcher(ddd).matches()) {
+        	erros.add("DDD só pode conter números.");
         } else if (ddd.length() > LIMITE_DDD) {
             erros.add("DDD deve ter no máximo " + LIMITE_DDD + " caracteres.");
         }
 
         if (verificador.verificar(numero)) {
         	erros.add("Número não pode estar vazio.");
-        } else if(SOMENTE_NUMEROS.matcher(numero).matches()) {
-        	erros.add("Número deve ter no máximo " + LIMITE_DDD + " caracteres.");
+        } else if(!SOMENTE_NUMEROS.matcher(numero).matches()) {
+        	erros.add("Número só pode conter números.");
         } else if (numero.length() > LIMITE_NUMERO) {
             erros.add("Número deve ter no máximo " + LIMITE_DDD + " caracteres.");
         }
