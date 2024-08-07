@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.autobots.automanager.entidades.Cliente;
 import com.autobots.automanager.modelo.Atualizador;
+import com.autobots.automanager.modelo.ClienteValidador;
 import com.autobots.automanager.repositorios.ClienteRepositorio;
 
 @Service
@@ -27,12 +29,21 @@ public class ClienteServicos {
 		return repositorio.findById(id);
 	}
 	
-	public Cliente atualizarCliente(Long id, Cliente atualizacao) {
+	public ResponseEntity<?> atualizarCliente(Long id, Cliente atualizacao) {
         return repositorio.findById(id).map(cliente -> {
         	Atualizador atualizador = new Atualizador();
         	atualizador.atualizarCliente(cliente, atualizacao);
-            return repositorio.save(cliente);
-        }).orElse(null);
+
+        	ClienteValidador validador = new ClienteValidador();
+        	List<String> erros = validador.validar(cliente);
+
+        	if (!erros.isEmpty()) {
+        		return ResponseEntity.badRequest().body(erros);
+        	}
+
+        	Cliente clienteSalvo = salvarCliente(cliente);
+    		return ResponseEntity.ok(clienteSalvo);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     public void excluirCliente(Long id) {

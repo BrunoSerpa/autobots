@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.autobots.automanager.entidades.Cliente;
+import com.autobots.automanager.modelo.ClienteValidador;
 import com.autobots.automanager.servicos.ClienteServicos;
 
 @RestController
@@ -15,7 +16,7 @@ import com.autobots.automanager.servicos.ClienteServicos;
 public class ClienteControle {
 	@Autowired
 	private ClienteServicos servicos;
-	
+
 	@GetMapping
 	public List<Cliente> obterClientes() {
 		return servicos.listarClientes();
@@ -27,15 +28,21 @@ public class ClienteControle {
 	}
 
 	@PostMapping
-	public ResponseEntity<Cliente> cadastrarCliente(@RequestBody Cliente cliente) {
-		Cliente clienteSalvo = servicos.salvarCliente(cliente);
-        return ResponseEntity.ok(clienteSalvo);
+	public ResponseEntity<?> cadastrarCliente(@RequestBody Cliente cliente) {
+	    ClienteValidador validador = new ClienteValidador();
+	    List<String> erros = validador.validar(cliente);
+
+	    if (!erros.isEmpty()) {
+	        return ResponseEntity.badRequest().body(erros);
+	    }
+
+	    Cliente clienteSalvo = servicos.salvarCliente(cliente);
+	    return ResponseEntity.ok(clienteSalvo);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Cliente> atualizarCliente(@PathVariable long id, @RequestBody Cliente atualizacao) {
-		Cliente clienteAtualizado = servicos.atualizarCliente(id, atualizacao);
-		return clienteAtualizado != null ? ResponseEntity.ok(clienteAtualizado) : ResponseEntity.notFound().build();
+	public ResponseEntity<?> atualizarCliente(@PathVariable long id, @RequestBody Cliente atualizacao) {
+		return servicos.atualizarCliente(id, atualizacao);
 	}
 
 	@DeleteMapping("/{id}")
