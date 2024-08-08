@@ -10,12 +10,15 @@ import org.springframework.stereotype.Service;
 import com.autobots.automanager.entidades.Cliente;
 import com.autobots.automanager.entidades.Documento;
 import com.autobots.automanager.entidades.Endereco;
+import com.autobots.automanager.entidades.Telefone;
 import com.autobots.automanager.modelo.Atualizador;
 import com.autobots.automanager.modelo.ClienteValidador;
 import com.autobots.automanager.modelo.DocumentoValidador;
 import com.autobots.automanager.modelo.EnderecoValidador;
+import com.autobots.automanager.modelo.TelefoneValidador;
 import com.autobots.automanager.repositorios.ClienteRepositorio;
 import com.autobots.automanager.repositorios.DocumentoRepositorio;
+import com.autobots.automanager.repositorios.TelefoneRepositorio;
 
 @Service
 public class ClienteServicos {
@@ -24,10 +27,13 @@ public class ClienteServicos {
 
 	@Autowired
 	private DocumentoRepositorio repositorioDocumento;
+	@Autowired
+	private TelefoneRepositorio repositorioTelefone;
 
 	private ClienteValidador validador = new ClienteValidador();
 	private DocumentoValidador validadorDocumento = new DocumentoValidador();
 	private EnderecoValidador validadorEndereco = new EnderecoValidador();
+	private TelefoneValidador validadorTelefone = new TelefoneValidador();
 	
 	public Cliente salvarCliente(Cliente cliente) {
 		return repositorio.save(cliente);
@@ -129,6 +135,54 @@ public class ClienteServicos {
                     documentos.remove(documento);
                     salvarCliente(cliente);
                     repositorioDocumento.delete(documento);
+                    return ResponseEntity.noContent().build();
+                }
+            }
+            return ResponseEntity.notFound().build();
+        }).orElse(ResponseEntity.notFound().build());
+    }
+    
+    public ResponseEntity<?> adicionartelefone(Long clienteId, Telefone telefone) {
+        return repositorio.findById(clienteId).map(cliente -> {
+            List<String> erros = validadorTelefone.validar(telefone);
+            if (!erros.isEmpty()) {
+                return ResponseEntity.badRequest().body(erros);
+            }
+            cliente.getTelefones().add(telefone);
+            Cliente clienteSalvo = salvarCliente(cliente);
+            return ResponseEntity.ok(clienteSalvo);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    public ResponseEntity<?> atualizartelefone(Long clienteId, Telefone telefoneAtualizado) {
+        return repositorio.findById(clienteId).map(cliente -> {
+            List<Telefone> telefones = cliente.getTelefones();
+            for (Telefone telefone : telefones) {
+                if (telefone.getId().equals(telefoneAtualizado.getId())) {
+                    Atualizador atualizador = new Atualizador();
+                    atualizador.atualizarTelefone(telefone, telefoneAtualizado);
+
+                    List<String> erros = validadorTelefone.validar(telefone);
+                    if (!erros.isEmpty()) {
+                        return ResponseEntity.badRequest().body(erros);
+                    }
+
+                    Cliente clienteSalvo = salvarCliente(cliente);
+                    return ResponseEntity.ok(clienteSalvo);
+                }
+            }
+            return ResponseEntity.notFound().build();
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    public ResponseEntity<?> deletarTelefone(Long clienteId, Long telefoneId) {
+        return repositorio.findById(clienteId).map(cliente -> {
+            List<Telefone> telefones = cliente.getTelefones();
+            for (Telefone telefone : telefones) {
+                if (telefone.getId().equals(telefoneId)) {
+                	telefones.remove(telefone);
+                    salvarCliente(cliente);
+                    repositorioTelefone.delete(telefone);
                     return ResponseEntity.noContent().build();
                 }
             }

@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.autobots.automanager.entidades.Cliente;
-import com.autobots.automanager.entidades.Documento;
-import com.autobots.automanager.entidades.Endereco;
+import com.autobots.automanager.entidades.*;
 import com.autobots.automanager.modelo.ClienteValidador;
 import com.autobots.automanager.servicos.ClienteServicos;
 
@@ -77,5 +75,21 @@ public class ClienteControle {
     @DeleteMapping("/{clienteId}/documentos/{documentoId}")
     public ResponseEntity<?> deletarDocumento(@PathVariable Long clienteId, @PathVariable Long documentoId) {
         return servicos.deletarDocumento(clienteId, documentoId);
+    }
+    
+    @PostMapping("/{clienteId}/telefones")
+    public ResponseEntity<?> adicionarTelefone(@PathVariable Long clienteId, @RequestBody Telefone telefone) {
+        return servicos.adicionartelefone(clienteId, telefone);
+    }
+
+    @PutMapping("/{clienteId}/telefones/{telefoneId}")
+    public ResponseEntity<?> atualizarTelefone(@PathVariable Long clienteId, @RequestBody Telefone telefoneAtualizado, @PathVariable Long telefoneId) {
+    	telefoneAtualizado.setId(telefoneId);
+        return servicos.atualizartelefone(clienteId, telefoneAtualizado);
+    }
+
+    @DeleteMapping("/{clienteId}/telefones/{telefoneId}")
+    public ResponseEntity<?> deletarTelefone(@PathVariable Long clienteId, @PathVariable Long telefoneId) {
+        return servicos.deletarTelefone(clienteId, telefoneId);
     }
 }
