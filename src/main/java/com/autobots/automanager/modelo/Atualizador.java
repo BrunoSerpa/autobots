@@ -86,10 +86,25 @@ public class Atualizador {
         }
     }
 
-    public void atualizarTelefones(List<Telefone> telefones, List<Telefone> atualizacoes){
-        if (atualizacoes != null && !atualizacoes.isEmpty()) {
-            telefones.clear();
-            telefones.addAll(atualizacoes);
+    
+    public void atualizarTelefones(List<Telefone> documentos, List<Telefone> atualizacoes){
+        for (Telefone atualizacao : atualizacoes) {
+            for (Telefone documento : documentos) {
+                if (atualizacao.getId() != null) {
+                    if (atualizacao.getId().equals(documento.getId())) {
+                    	atualizarTelefone(documento, atualizacao);
+                    }
+                }
+            }
+        }
+    }
+
+    public void atualizarTelefone(Telefone documento, Telefone atualizacao){
+        if (!verificador.verificar(atualizacao.getDdd())) {
+            documento.setDdd(atualizacao.getDdd());
+        }
+        if (!verificador.verificar(atualizacao.getNumero())) {
+            documento.setNumero(atualizacao.getNumero());
         }
     }
 }
